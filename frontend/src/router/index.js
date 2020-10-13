@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import routes from './routes'
+import store from '../store'
 
 Vue.use(VueRouter)
 
@@ -25,6 +26,21 @@ export default function (/* { store, ssrContext } */) {
     mode: process.env.VUE_ROUTER_MODE,
     base: process.env.VUE_ROUTER_BASE
   })
+
+  Router.beforeEach((to, from, next) => {
+    // if the route is not public
+    if (!to.meta.public) {
+        // if the user authenticated
+        if (store.getters.isAuthenticated) { // I declared a `getter` function in the store to check if the user is authenticated.
+            // continue to the route
+            next();
+        } else {
+            // redirect to login
+            next({name: 'login'});
+        }
+    }
+    next();
+  });
 
   return Router
 }

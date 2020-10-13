@@ -13,14 +13,8 @@ export default {
     user: {
         authentication: false
     },
-    getAuthUser () {
-        const accessToken = LocalStorage.getItem('access_token')
-        
-        axios.get('http://localhost:3030/users', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        })
+    getAuthUser () {        
+        axios.get(urlApiUser, headers)
           .then((response) => {
             LocalStorage.set('user', response.data)
             Notify.create({
@@ -29,7 +23,7 @@ export default {
             })
           }).catch((err) => {
             Notify.create({
-              message: err,
+              message: err.response.data.message,
               color: 'red'
             })
           })

@@ -5,7 +5,16 @@ const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
-    beforeEnter: checkAuth,
+    name:'home',
+    beforeEnter: (to, from, next) => {
+      if (auth.user.authenticated && LocalStorage.getItem('accessToken')) {
+        next('/')
+      } else if (!LocalStorage.getItem('accessToken') && !auth.user.authenticated){
+        next('/login')
+      } else{
+        next()
+      }
+    },
     children: [
       { path: '', component: () => import('pages/Todo.vue') },
       { path: '/help', component: () => import('pages/Help.vue') }
@@ -14,6 +23,9 @@ const routes = [
   {
     path:'/login',
     component: () => import('layouts/Login.vue'),
+    meta: {
+      disableIfLoggedIn: true
+    },
     name: 'login'
   },
 
@@ -24,19 +36,5 @@ const routes = [
     component: () => import('pages/Error404.vue')
   }
 ]
-
-function checkAuth (to, from, next) {
-  if (to.path === '/' && auth.user.authenticated) {
-    next('/')
-  }
-  else if (!LocalStorage.getItem('accessToken') && to.path !== '/') {
-    console.log('not logged')
-    next('/login')
-  }
-  else {
-    next()
-  }
-}
-
 
 export default routes
