@@ -81,8 +81,8 @@
           <q-avatar size="56px" class="q-mb-sm">
             <img src="https://cdn.quasar.dev/img/boy-avatar.png">
           </q-avatar>
-          <div class="text-weight-bold">Mochamad Eka Ramadan</div>
-          <div>@ramadan14</div>
+          <div class="text-weight-bold">{{ users.username }}</div>
+          <div>{{ users.email }}</div>
         </div>
       </q-img>
     </q-drawer>
@@ -98,12 +98,23 @@
 <script>
   import { LocalStorage, Notify, date } from 'quasar'
   import auth from '../auth'
+  import axios from 'axios'
+
+  const urlApi = 'http://localhost:3030/users'
+  const userId = LocalStorage.getItem('userId')
+  const accessToken = LocalStorage.getItem('accessToken')
+  const headers = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  }
 
   export default {
     name: 'MainLayout',
     data () {
       return {
         leftDrawerOpen: false,
+        users: []
       }
     },
     methods: {
@@ -124,6 +135,16 @@
         let timeStamp = Date.now()
         return date.formatDate(timeStamp, 'dddd D MMMM YYYY')
       }
+    },
+    mounted () {
+      axios
+       .get(urlApi+'/'+userId, headers)
+       .then((res) => {
+         this.users = res.data
+       })
+       .catch((err) => {
+         console.log(err)
+       })
     }
   }
 </script>
