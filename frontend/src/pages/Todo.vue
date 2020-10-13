@@ -53,9 +53,10 @@
 
 <script>
 import axios from 'axios'
+import { LocalStorage } from 'quasar'
 
 const urlApi = 'http://localhost:3030/todo'
-const accessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyJ9.eyJpYXQiOjE2MDI0NzI4MDgsImV4cCI6MTYwMjU1OTIwOCwiYXVkIjoiaHR0cHM6Ly95b3VyZG9tYWluLmNvbSIsImlzcyI6ImZlYXRoZXJzIiwic3ViIjoiNWY4M2NiMDIxY2VjYzEzMGEwMThmZjkxIiwianRpIjoiOTU2YzRlNWQtMDUyMy00ODY5LTg3ZjMtMzA3Nzc2Y2QxZjY2In0._08qVV8h5ccM26JaxObpAD26l9EufMDdskSqT3qDlI4'
+const accessToken = LocalStorage.getItem('accessToken')
 const headers = {
   headers: {
     Authorization: `Bearer ${accessToken}`
@@ -108,7 +109,11 @@ export default {
           this.newTodo = '';
        })
        .catch((err) => {
-         console.log(err)
+         console.log(accessToken)
+         this.$q.notify({
+           message: err.response.data.message,
+           color: 'red'
+         })
        })
     },
     updateStatus(id){
@@ -142,11 +147,14 @@ export default {
     axios
       .get(urlApi, headers)
       .then((res) => {
-        console.log(res)
         this.todos = res.data.data
       })
       .catch((err) => {
-        console.log(err)
+        console.log(accessToken)
+        this.$q.notify({
+          message: err.response.data.message,
+          color: 'red'
+        })
       })
 
   }
