@@ -12,9 +12,9 @@ Backend
 
 
 
-Frontend Configuration
+## Frontend Configuration
 
-## Install the dependencies
+### Install the dependencies
 ```bash
 npm install
 ```
